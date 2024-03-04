@@ -9,9 +9,6 @@ from scipy import interpolate
 import matplotlib.pyplot as plt
 from scipy import signal
 
-df = pd.read_csv(
-        uploaded_file,
-
 # Excelファイルからデータを読み込み
 df = pd.read_excel(uploaded_file)
 timestamps = df["Time[s]"]  # 心拍のタイムスタンプデータ
