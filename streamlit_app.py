@@ -1,8 +1,7 @@
-import matplotlib.pyplot as plt
-import numpy as np
+import streamlit as st
 
-arr = np.random.normal(1, 1, size=100)
-fig, ax = plt.subplots()
-ax.hist(arr, bins=20)
-
-fig
+st.title("title") # タイトル
+st.header("header") # ヘッダー
+st.write("write") # 表示
+st.markdown("# markdown") # マークダウンで表示
+st.text("text") # テキスト表示
