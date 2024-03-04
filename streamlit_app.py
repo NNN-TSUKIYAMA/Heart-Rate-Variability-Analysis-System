@@ -1,15 +1,16 @@
 import streamlit as st
 
-st.title("心拍変動解析ツール") # タイトル
-st.header("FFT") # ヘッダー
-st.text('FFTしたいエクセルファイルをアップロードしてください')
-uploaded_file = st.file_uploader("Choose a file")
-
 import pandas as pd
 import numpy as np
 from scipy import interpolate
 import matplotlib.pyplot as plt
 from scipy import signal
+
+st.title("心拍変動解析ツール") # タイトル
+st.header("FFT") # ヘッダー
+st.text('FFTしたいエクセルファイルをアップロードしてください')
+uploaded_file = st.file_uploader("Choose a file",  type='xlsx')
+
 
 # Excelファイルからデータを読み込み
 df = pd.read_excel(uploaded_file)
