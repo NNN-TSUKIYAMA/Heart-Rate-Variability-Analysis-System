@@ -1,66 +1,37 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
-from scipy import interpolate
-import matplotlib.pyplot as plt
-from scipy import signal
 
-# Streamlitアプリの設定
-st.title("心拍変動解析ツール")
-st.sidebar.header("解析オプション")
+st.title("CSV/Excel データの読み込みとプロント")
 
 # ファイルアップロード
-uploaded_file = st.file_uploader("Excelファイルをアップロードしてください", type='xlsx')
+uploaded_file = st.file_uploader("CSVまたはExcelファイルをアップロードしてください", type=['csv', 'xlsx'])
 
-# ファイルがアップロードされた場合
 if uploaded_file is not None:
-    df = pd.read_excel(uploaded_file)
-    st.write("アップロードされたデータ:")
-    st.write(df)
+    # ファイルがアップロードされた場合
+    file_ext = uploaded_file.name.split(".")[-1]
 
-    # データの前処理
-    timestamps = df["Time[s]"]
-    rri = df["RRIa"]
+    try:
+        if file_ext == 'csv':
+            # CSVファイルの場合
+            df = pd.read_csv(uploaded_file)
+        elif file_ext in ['xls', 'xlsx']:
+            # Excelファイルの場合
+            df = pd.read_excel(uploaded_file)
+        else:
+            st.error("サポートされていないファイル形式です。CSVまたはExcelファイルをアップロードしてください。")
+    except Exception as e:
+        st.error(f"ファイルの読み込み中にエラーが発生しました: {e}")
+    else:
+        # データの表示
+        st.write("読み込んだデータ:")
+        st.write(df)
 
-    valid_indices = ~np.isnan(rri)
-    valid_timestamps = timestamps[valid_indices]
-    valid_rri = rri[valid_indices]
+        # プロントの表示
+        st.subheader("データに対する操作:")
+        if st.button("基本的な統計情報を表示"):
+            st.write("### 基本的な統計情報:")
+            st.write(df.describe())
 
-    new_timestamps = np.arange(valid_timestamps.iloc[0], valid_timestamps.iloc[-1], 0.5)
-    interpolator = interpolate.interp1d(valid_timestamps, valid_rri, kind='cubic', fill_value="extrapolate")
-    resampled_rri = interpolator(new_timestamps)
-
-    detrended_rri = resampled_rri - np.mean(resampled_rri)
-
-    # フィルタリングとFFT分析
-    filtered_rri = signal.filtfilt(*signal.butter(4, 0.04 / (0.5 * 2.0), btype='high'), detrended_rri)
-    filtered_rri = signal.filtfilt(*signal.butter(4, 0.6 / (0.5 * 2.0), btype='low'), filtered_rri)
-    filtered_rri_hamming = filtered_rri * signal.hamming(len(filtered_rri))
-
-    N = len(filtered_rri_hamming)
-    freq = np.fft.fftfreq(N, d=1/2.0)
-    F = np.fft.fft(filtered_rri_hamming)
-    amp = np.abs(F/(N/2))
-
-    # プロット
-    st.subheader("解析結果")
-    st.pyplot(plt.plot(new_timestamps, filtered_rri, label="Filtered RRI"))
-    st.pyplot(plt.plot(new_timestamps, filtered_rri_hamming, label="Filtered RRI (Hamming Window)"))
-    st.pyplot(plt.plot(freq[1:int(N/2)], amp[1:int(N/2)], label="FFT Power Spectrum"))
-    
-    # LF/HF比と補正値の計算
-    lf_power = np.sum(amp[(freq >= 0.04) & (freq <= 0.15)])
-    hf_power = np.sum(amp[(freq >= 0.15) & (freq <= 0.4)])
-    lf_hf_ratio = lf_power / hf_power
-
-    lf_correction = lf_power / (np.sum(amp[(freq >= 0.0033) & (freq <= 0.04)]) + np.sum(amp[(freq >= 0) & (freq <= 0.4)]))
-    hf_correction = hf_power / (np.sum(amp[(freq >= 0.0033) & (freq <= 0.04)]) + np.sum(amp[(freq >= 0) & (freq <= 0.4)]))
-    lf_hf_ratio_correction = lf_correction / hf_correction
-
-    st.subheader("解析結果の指標")
-    st.write(f"LF/HF比: {lf_hf_ratio}")
-    st.write(f"LF補正値: {lf_correction}")
-    st.write(f"HF補正値: {hf_correction}")
-    st.write(f"LF/HF Ratio 補正値: {lf_hf_ratio_correction}")
-
-# 他の操作やプロントを追加することもできます
+        # ここに他のプロントやデータに対する操作を追加することができます
+else:
+    st.info("ファイルがアップロードされていません。")
