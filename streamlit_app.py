@@ -2,14 +2,16 @@ import streamlit as st
 
 st.title("心拍変動解析ツール") # タイトル
 st.header("FFT") # ヘッダー
-import streamlit as st
-uploaded_file = st.file_uploader("FFTしたいエクセルファイルをアップロードしてください。")
+
+import pandas as pd
 import numpy as np
 from scipy import interpolate
 import matplotlib.pyplot as plt
 from scipy import signal
 
 # Excelファイルからデータを読み込み
+import streamlit as st
+uploaded_file = st.file_uploader("FFTしたいエクセルファイルをアップロードしてください。")
 df = pd.read_excel(uploaded_file)
 timestamps = df["Time[s]"]  # 心拍のタイムスタンプデータ
 rri = df["RRIa"] # 心拍間隔データ
@@ -18,6 +20,7 @@ rri = df["RRIa"] # 心拍間隔データ
 valid_indices = ~np.isnan(rri)
 valid_timestamps = timestamps[valid_indices]
 valid_rri = rri[valid_indices]
+
 
 # リサンプリングのための新しいタイムスタンプを作成
 new_timestamps = np.arange(valid_timestamps.iloc[0], valid_timestamps.iloc[-1], 0.5)
@@ -125,6 +128,3 @@ lf_hf_ratio_correction = lf_correction / hf_correction
 print("LF補正値:", lf_correction)
 print("HF補正値:", hf_correction)
 print("LF/HF Ratio 補正値:",lf_hf_ratio_correction)
-
-
-
