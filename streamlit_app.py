@@ -1,8 +1,9 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-from scipy import interpolate, signal
+from scipy import interpolate
 import matplotlib.pyplot as plt
+from scipy import signal
 
 # Streamlitアプリの設定
 st.title("心拍変動解析ツール")
