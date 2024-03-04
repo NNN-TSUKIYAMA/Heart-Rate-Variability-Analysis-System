@@ -3,9 +3,7 @@ import streamlit as st
 st.title("心拍変動解析ツール") # タイトル
 st.header("FFT") # ヘッダー
 st.text('FFTしたいエクセルファイルをアップロードしてください')
-uploaded_file = st.file_uploader
-if uploaded_file is not None:
-    st.write(uploaded_file)
+uploaded_file = st.file_uploader("Choose a file")
 
 import pandas as pd
 import numpy as np
