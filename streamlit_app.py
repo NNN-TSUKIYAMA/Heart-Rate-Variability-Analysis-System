@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 
 st.title("心拍変動解析") # タイトル
 st.header("FFTr") # ヘッダー
@@ -12,6 +11,7 @@ if uploaded_file is not None:
     rri = df["RRIa"] # 心拍間隔データ
 
 # NaN値を除外してデータを抽出
+import numpy as np
 valid_indices = ~np.isnan(rri)
 valid_timestamps = timestamps[valid_indices]
 valid_rri = rri[valid_indices]
@@ -20,6 +20,7 @@ valid_rri = rri[valid_indices]
 new_timestamps = np.arange(valid_timestamps.iloc[0], valid_timestamps.iloc[-1], 0.5)
 
 # スプライン3次補間関数を作成
+from scipy import interpolate
 interpolator = interpolate.interp1d(valid_timestamps, valid_rri, kind='cubic', fill_value="extrapolate")
 resampled_rri = interpolator(new_timestamps)
 print(new_timestamps,resampled_rri)
@@ -36,6 +37,7 @@ detrended_rri = resampled_rri - mean_rri
 
 
 #ハイパス
+from scipy import signal
 cutoff_freq = 0.04  # カットオフ周波数 [Hz]
 sampling_rate = 2.0
 b, a = signal.butter(4, cutoff_freq / (0.5 * sampling_rate), btype='high')
@@ -61,6 +63,7 @@ F = np.fft.fft(filtered_rri_hamming)
 amp = np.abs(F/(N/2))
 
 # グラフの表示
+import matplotlib.pyplot as plt
 new_timestamps = new_timestamps[:len(filtered_rri2)]
 fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 6))
 ax1.plot(new_timestamps, filtered_rri2)
