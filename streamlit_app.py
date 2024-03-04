@@ -2,8 +2,10 @@ import streamlit as st
 
 st.title("心拍変動解析ツール") # タイトル
 st.header("FFT") # ヘッダー
-import streamlit as st
-uploaded_file = st.file_uploader("FFTしたいエクセルファイルをアップロードしてください。")
+st.text('FFTしたいエクセルファイルをアップロードしてください')
+uploaded_file = st.file_uploader
+if uploaded_file is not None:
+    st.write(uploaded_file)
 
 import pandas as pd
 import numpy as np
