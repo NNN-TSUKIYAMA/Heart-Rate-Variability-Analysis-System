@@ -14,7 +14,6 @@ submit_btn_xlsx = st.button('xlsx処理実行')
 
 #ボタンが押されたら処理を実行する
 if submit_btn_xlsx:
-# Excelファイルからデータを読み込み
 df = pd.read_excel(uploaded_file)
 timestamps = df["Time[s]"]  # 心拍のタイムスタンプデータ
 rri = df["RRIa"] # 心拍間隔データ
