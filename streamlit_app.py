@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-st.title("CSV/Excel データの読み込みとプロント")
+st.title("CSV/Excel データの読み込み")
 
 # ファイルアップロード
 uploaded_file = st.file_uploader("CSVまたはExcelファイルをアップロードしてください", type=['csv', 'xlsx'])
@@ -25,13 +25,7 @@ if uploaded_file is not None:
         # データの表示
         st.write("読み込んだデータ:")
         st.write(df)
-
-        # プロントの表示
-        st.subheader("データに対する操作:")
-        if st.button("基本的な統計情報を表示"):
-            st.write("### 基本的な統計情報:")
-            st.write(df.describe())
-
-        # ここに他のプロントやデータに対する操作を追加することができます
 else:
     st.info("ファイルがアップロードされていません。")
+
+# ここにデータに対する操作や可視化などを追加することができます
