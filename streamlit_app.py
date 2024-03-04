@@ -16,7 +16,7 @@ if uploaded_file is not None:
             df = pd.read_csv(uploaded_file)
         elif file_ext in ['xls', 'xlsx']:
             # Excelファイルの場合
-            df = pd.read_excel(uploaded_file, engine='openpyxl')
+            df = pd.read_excel(uploaded_file)
         else:
             st.error("サポートされていないファイル形式です。CSVまたはExcelファイルをアップロードしてください。")
     except Exception as e:
@@ -27,3 +27,5 @@ if uploaded_file is not None:
         st.write(df)
 else:
     st.info("ファイルがアップロードされていません。")
+
+# ここにデータに対する操作や可視化などを追加することができます
